@@ -405,3 +405,55 @@ echo $?
 gaps: fastlib, nativeext, puresdist
 0
 ```
+
+
+## Installing from the gap wheel index
+
+The [gap wheel index](https://wheelgap.github.io/tracker/wheels/) is a supplementary pip index for packages that do not yet publish every needed wheel on PyPI. Its current coverage is Windows on ARM with CPython 3.14 and free-threaded 3.14t; Linux wheels are not published yet. Check the index page for the latest coverage.
+
+Use pip for this partial index. uv's default [first-index strategy](https://docs.astral.sh/uv/concepts/indexes/#first-index) limits a package to candidates from the first index that contains it, which can hide PyPI versions when an extra index only contains selected wheels.
+
+### GitHub Actions
+
+Set `PIP_EXTRA_INDEX_URL` for the job so pip can use PyPI and the gap wheel index:
+
+```yaml
+jobs:
+  install:
+    runs-on: windows-11-arm
+    env:
+      PIP_EXTRA_INDEX_URL: https://wheelgap.github.io/tracker/wheels/simple/
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+          architecture: "arm64"
+      - run: python -m pip install -r requirements.txt
+```
+
+### Docker
+
+For a Windows ARM64 image using Python 3.14 or 3.14t, add this environment variable before installing requirements:
+
+```dockerfile
+ENV PIP_EXTRA_INDEX_URL=https://wheelgap.github.io/tracker/wheels/simple/
+RUN python -m pip install -r requirements.txt
+```
+
+Linux containers will continue to get their wheels from PyPI until the index publishes Linux wheels.
+
+### pip configuration
+
+To make the extra index available to pip by default, add this to `pip.ini` on Windows or `pip.conf` on macOS and Linux:
+
+```ini
+[global]
+extra-index-url = https://wheelgap.github.io/tracker/wheels/simple/
+```
+
+You can also put the setting in `requirements.txt`:
+
+```text
+--extra-index-url https://wheelgap.github.io/tracker/wheels/simple/
+```
