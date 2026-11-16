@@ -425,7 +425,7 @@ jobs:
       PIP_EXTRA_INDEX_URL: https://wheelgap.github.io/tracker/wheels/simple/
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.14"
           architecture: "arm64"
@@ -434,25 +434,12 @@ jobs:
 
 ### Docker
 
-For a Windows ARM64 image using Python 3.14 or 3.14t, add this environment variable before installing requirements:
+Docker images are Linux, and the index has no Linux wheels yet, so it doesn't help a Docker build today. Run
+`wheelgap --dockerfile Dockerfile` to see which packages your image will build from source instead.
 
-```dockerfile
-ENV PIP_EXTRA_INDEX_URL=https://wheelgap.github.io/tracker/wheels/simple/
-RUN python -m pip install -r requirements.txt
-```
+### In the project
 
-Linux containers will continue to get their wheels from PyPI until the index publishes Linux wheels.
-
-### pip configuration
-
-To make the extra index available to pip by default, add this to `pip.ini` on Windows or `pip.conf` on macOS and Linux:
-
-```ini
-[global]
-extra-index-url = https://wheelgap.github.io/tracker/wheels/simple/
-```
-
-You can also put the setting in `requirements.txt`:
+Put the setting in the project's `requirements.txt`, so it applies to that project only:
 
 ```text
 --extra-index-url https://wheelgap.github.io/tracker/wheels/simple/
