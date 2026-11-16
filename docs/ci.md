@@ -260,3 +260,6 @@ dropped-target lines are what makes a release pipeline fail.
 - **Any CI:** the [exit code](output.md#exit-codes) fails the job; `--json` gives a machine-readable report and
   `--markdown` one you can post as a comment.
 - **Monorepos and multi-arch images:** see the [recipes](recipes.md).
+
+
+For using the gap wheel index with pip, CI, Docker, or pip configuration, see [the recipes](recipes.md#installing-from-the-gap-wheel-index).
